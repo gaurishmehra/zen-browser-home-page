@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Homepage</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏠</text></svg>">
+  <style>
+    /* General Styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+    body {
+    min-height: 100vh;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    color: #fff;
+    }
+
+    /* Add this new style for the background */
+    body::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('bg.jpg'); /* Replace with your image URL */
+    background-size: cover;
+    background-position: center;
+    filter: blur(8px) brightness(0.7); /* Adjust blur and brightness as needed */
+    scale: 1.1;
+    z-index: -1;
+    }
+
+    /* Make sure container has proper z-index */
+    .container {
+    position: relative;
+    z-index: 1;
+    }
+    /* Add this to your CSS */
+    .bookmark img[alt="DeepSeek"] {
+    background: transparent;
+    filter: brightness(0) invert(1); /* This will make the icon white */
+    }
+    @keyframes gradient {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    .container {
+      width: 100%;
+      max-width: 1000px;
+      display: grid;
+      gap: 2rem;
+      grid-template-columns: repeat(2, 1fr);
+      place-items: center;
+      animation: fadeIn 1s ease-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .card {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 1.5rem;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      width: 100%;
+      text-align: center;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      position: relative;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+    }
+    .time {
+      font-size: 3.5rem;
+      font-weight: 300;
+      margin-bottom: 0.5rem;
+      animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse {
+      0% { opacity: 1; }
+      50% { opacity: 0.8; }
+      100% { opacity: 1; }
+    }
+    .date {
+      font-size: 1.2rem;
+      opacity: 0.8;
+    }
+    .weather {
+      font-size: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .weather-icon {
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+    }
+    .bookmarks {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+    }
+    .bookmark {
+      background: rgba(255, 255, 255, 0.15);
+      padding: 1rem;
+      border-radius: 15px;
+      text-align: center;
+      text-decoration: none;
+      color: #fff;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+    .bookmark:hover {
+      transform: translateY(-3px) scale(1.05);
+      background: rgba(255, 255, 255, 0.25);
+    }
+    .bookmark img {
+      width: 16px;
+      height: 16px;
+    }
+    .countdown {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .countdown-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.8rem;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 10px;
+      transition: transform 0.3s ease;
+    }
+    .countdown-item:hover {
+      transform: scale(1.02);
+    }
+    .system-info-item {
+      background: rgba(255, 255, 255, 0.15);
+      padding: 0.8rem;
+      border-radius: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.8rem;
+      transition: transform 0.3s ease;
+    }
+    .system-info-item:hover {
+      transform: scale(1.02);
+    }
+    h2 {
+      margin-bottom: 1rem;
+      color: #fff;
+      opacity: 0.9;
+    }
+    /* Quick Access Widget Styles */
+    .instruction-widget {
+      font-size: 1.2rem;
+      padding: 1rem;
+      background: rgba(0,0,0,0.2);
+      border-radius: 10px;
+    }
+    .instruction-widget kbd {
+      background: rgba(255,255,255,0.2);
+      border-radius: 3px;
+      padding: 0.2rem 0.4rem;
+      margin: 0 0.2rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Time and Date Card -->
+    <div class="card">
+      <div class="time" id="time">00:00:00</div>
+      <div class="date" id="date">Monday, January 1</div>
+    </div>
+
+    <!-- Weather Card -->
+    <div class="card weather">
+      <div class="weather-icon"></div>
+      <div id="weather">--°C</div>
+      <div id="location">India</div>
+    </div>
+
+    <!-- System Info Card -->
+    <div class="card">
+      <h2>System Info</h2>
+      <div class="system-info">
+        <div class="system-info-item">
+          <span>Browser</span>
+          <span id="browser-value">Zen Browser</span>
+        </div>
+        <div class="system-info-item">
+          <span>Operating System</span>
+          <span id="os-value">Arch Linux</span>
+        </div>
+        <div class="system-info-item">
+          <span>Window Manager</span>
+          <span id="wm-value">Hyprland</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bookmarks Card -->
+    <div class="card">
+      <h2>Pins</h2>
+      <div class="bookmarks">
+        <a href="https://chess.com" class="bookmark">
+          <img src="" alt="">
+          Chess.com
+        </a>
+        <a href="https://github.com" class="bookmark">
+          <img src="https://github.com/favicon.ico" alt="GitHub">
+          GitHub
+        </a>
+        <a href="https://youtube.com" class="bookmark">
+          <img src="https://www.youtube.com/favicon.ico" alt="YouTube">
+          YouTube
+        </a>
+        <a href="https://huggingface.co/" class="bookmark">
+          <img src="https://huggingface.co/favicon.ico" alt="HuggingFace">
+          HuggingFace
+        </a>
+        <a href="https://lichess.org" class="bookmark">
+          <img src="" alt="">
+          Lichess
+        </a>
+        <a href="https://gaurish.xyz" class="bookmark">
+          <img src="" alt="">
+          Gaurish
+        </a>
+      </div>
+    </div>
+
+    <!-- Countdowns Card -->
+    <div class="card" style="grid-column: span 2;">
+      <h2>Countdowns</h2>
+      <div class="countdown" id="countdown"></div>
+    </div>
+
+    <!-- Quick Access Instruction Widget -->
+    <div class="card" style="grid-column: span 2;">
+      <h2>Quick Access</h2>
+      <div class="instruction-widget">
+        <p>Tip: To focus the URL bar, press <kbd>Ctrl+L</kbd>
+      </div>
+    </div>
+  </div>
+
+  <script>
+      fetch('config.json')
+    .then(response => response.json())
+    .then(config => {
+      const WEATHER_COORDINATES = {
+        latitude: config.weatherLatitude,
+        longitude: config.weatherLongitude
+      };
+      // Now you can use WEATHER_COORDINATES in your weather code
+      console.log('Loaded coordinates:', WEATHER_COORDINATES);
+    })
+    .catch(err => console.error('Error loading configuration:', err));
+    /* Time and Date Functions */
+    function updateTime() {
+      const now = new Date();
+      document.getElementById('time').textContent = now.toLocaleTimeString();
+      document.getElementById('date').textContent = now.toLocaleDateString(undefined, {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+    }
+    setInterval(updateTime, 1000);
+    updateTime();
+
+    async function fetchWeather() {
+      const url = `https://api.open-meteo.com/v1/forecast?latitude=${WEATHER_COORDINATES.latitude}&longitude=${WEATHER_COORDINATES.longitude}&current_weather=true`;
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+        if (data.current_weather) {
+          const current = data.current_weather;
+          document.querySelector('.weather-icon').textContent = getWeatherIcon(current.weathercode);
+          document.getElementById('weather').textContent = `${current.temperature}°C`;
+        }
+      } catch (err) {
+        console.error("Error fetching weather:", err);
+      }
+    }
+
+    function getWeatherIcon(code) {
+      const weatherIcons = {
+        0: "☀️",
+        1: "🌤️",
+        2: "🌤️",
+        3: "🌤️",
+        45: "🌫️",
+        48: "🌫️",
+        51: "🌦️",
+        53: "🌦️",
+        55: "🌦️",
+        61: "🌧️",
+        63: "🌧️",
+        65: "🌧️",
+        66: "❄️",
+        67: "❄️",
+        71: "❄️",
+        73: "❄️",
+        75: "❄️",
+        80: "🌦️",
+        81: "🌦️",
+        82: "🌦️",
+        95: "⛈️",
+        96: "⛈️",
+        99: "⛈️"
+      };
+      return weatherIcons[code] || "❓";
+    }
+
+    // Initial weather fetch and update every 10 minutes
+    fetchWeather();
+    setInterval(fetchWeather, 600000);
+
+    /* Countdown Functions */
+    const countdowns = [
+      { title: 'Jee Mains 2', date: '2025-04-01' },
+      { title: 'Boards', date: '2025-02-21' },
+      { title: 'Jee Advance', date: '2025-05-18' }
+    ];
+
+    function updateCountdowns() {
+      const countdownContainer = document.getElementById('countdown');
+      countdownContainer.innerHTML = '';
+      
+      countdowns.forEach(({ title, date }) => {
+        const remaining = Math.ceil((new Date(date) - new Date()) / (1000 * 60 * 60 * 24));
+        const div = document.createElement('div');
+        div.className = 'countdown-item';
+        div.innerHTML = `
+          <span class="countdown-title">${title}</span>
+          <span class="countdown-days">${remaining} days</span>
+        `;
+        countdownContainer.appendChild(div);
+      });
+    }
+
+    updateCountdowns();
+    setInterval(updateCountdowns, 3600000); // Update every hour
+
+    /* Additional Fixes for Bookmarks */
+    document.addEventListener('DOMContentLoaded', function(){
+      document.querySelectorAll('.bookmark').forEach(bookmark => {
+        // Fix for about:logins bookmark.
+        if (bookmark.getAttribute('href') === 'about:logins') {
+        bookmark.setAttribute('href', '#');
+        bookmark.addEventListener('click', function(e) {
+            e.preventDefault();
+            // Just open the passwords page - let the browser handle it internally
+            window.location.href = 'about:logins'; // This will work in Chrome
+            // For Firefox it would be 'about:logins'
+            // For Safari it would be 'safari://passwords'
+        });
+        }
+        // Dynamic image assignment if the image src is empty.
+        const img = bookmark.querySelector('img');
+        if (img && (!img.getAttribute('src') || img.getAttribute('src').trim() === "")) {
+          const href = bookmark.getAttribute('href');
+          if (href && href.startsWith('http')) {
+            try {
+              const urlObj = new URL(href);
+              const domain = urlObj.hostname;
+              // Use FaviconKit API for (usually) transparent favicons.
+              img.src = "https://api.faviconkit.com/" + domain + "/64";
+            } catch(e) {
+              img.src = document.querySelector('link[rel="icon"]').href;
+            }
+          } else {
+            img.src = document.querySelector('link[rel="icon"]').href;
+          }
+        }
+      });
+    });
+  </script>
+</body>
+</html>
