@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Homepage</title>
+  <title>Customizable Dashboard</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏠</text></svg>">
   <style>
     /* General Styles */
@@ -33,7 +33,7 @@
       background-size: cover;
       background-position: center;
       filter: blur(8px) brightness(0.7);
-      scale: 1.1;
+      transform: scale(1.1);
       z-index: -1;
     }
     /* Container Styles */
@@ -156,9 +156,110 @@
       width: 16px;
       height: 16px;
     }
+    /* Settings Button */
+
+  #settings-button {
+    position: fixed;
+    top: 20px;
+    right: 20px;  /* Changed from left: 20px; to right: 20px; */
+    z-index: 100;
+    background: rgba(255,105,180,0);
+    border: none;
+    color: #fff;
+    font-size: 24px;
+    padding: 8px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+
+    #settings-button:hover {
+      background: rgba(255,105,180,0.2);
+    }
+    /* Modal Styles for Settings */
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 200;
+    }
+    .modal-content {
+      background: rgba(20,20,20,0.95);
+      border: 1px solid #ff69b4;
+      padding: 2rem;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 600px;
+      color: #fff;
+      max-height: 90vh;
+      overflow-y: auto;
+      backdrop-filter: blur(10px);
+    }
+    .modal-content fieldset {
+      border: 1px solid #444;
+      margin-bottom: 1rem;
+      padding: 1rem;
+    }
+    .modal-content label {
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+    .modal-content input,
+    .modal-content textarea {
+      width: 100%;
+      margin-bottom: 1rem;
+      padding: 0.5rem;
+      border-radius: 5px;
+      border: none;
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+    }
+    .modal-content button {
+      margin-top: 1rem;
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 5px;
+      background: #ff69b4;
+      color: #fff;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    .modal-content button:hover {
+      background: #ff85c1;
+    }
+    .modal-content .remove-countdown,
+    .modal-content .remove-pin {
+      background: #c00;
+      color: #fff;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+      margin-top: 0.5rem;
+    }
+    /* Import/Export Section */
+    #import-export-section {
+      margin-top: 1rem;
+      text-align: center;
+    }
+    #import-export-section button {
+      margin: 0.5rem;
+    }
+    #import-area-container {
+      display: none;
+      margin-top: 1rem;
+    }
   </style>
 </head>
 <body>
+  <!-- Settings Icon -->
+  <button id="settings-button" title="Settings">&#9881;</button>
+
   <div class="container">
     <!-- Time and Date Card -->
     <div class="card">
@@ -166,10 +267,12 @@
       <div class="date" id="date">Monday, January 1</div>
     </div>
 
-    <!-- Countdown Card (replacing Weather) -->
+    <!-- Countdown Card -->
     <div class="card">
       <h2>Countdowns</h2>
-      <div class="countdown" id="countdown"></div>
+      <div class="countdown" id="countdown">
+        <!-- Countdown events will be dynamically inserted here -->
+      </div>
     </div>
 
     <!-- System Info Card -->
@@ -178,47 +281,24 @@
       <div class="system-info">
         <div class="system-info-item">
           <span>Browser</span>
-          <span id="browser-value">Zen Browser</span>
+          <span id="browser-value"></span>
         </div>
         <div class="system-info-item">
           <span>Operating System</span>
-          <span id="os-value">Arch Linux</span>
+          <span id="os-value"></span>
         </div>
         <div class="system-info-item">
           <span>Window Manager</span>
-          <span id="wm-value">Hyprland</span>
+          <span id="wm-value"></span>
         </div>
       </div>
     </div>
 
-    <!-- Bookmarks Card -->
+    <!-- Bookmarks (Pins) Card -->
     <div class="card">
       <h2>Pins</h2>
       <div class="bookmarks">
-        <a href="https://chess.com" class="bookmark">
-          <img src="" alt="">
-          Chess.com
-        </a>
-        <a href="https://github.com" class="bookmark">
-          <img src="https://github.com/favicon.ico" alt="GitHub">
-          GitHub
-        </a>
-        <a href="https://youtube.com" class="bookmark">
-          <img src="https://www.youtube.com/favicon.ico" alt="YouTube">
-          YouTube
-        </a>
-        <a href="https://huggingface.co/" class="bookmark">
-          <img src="https://huggingface.co/favicon.ico" alt="HuggingFace">
-          HuggingFace
-        </a>
-        <a href="https://lichess.org" class="bookmark">
-          <img src="" alt="">
-          Lichess
-        </a>
-        <a href="https://gaurish.xyz" class="bookmark">
-          <img src="" alt="">
-          Gaurish
-        </a>
+        <!-- Pins will be dynamically populated from the configuration -->
       </div>
     </div>
 
@@ -231,8 +311,51 @@
     </div>
   </div>
 
+  <!-- Settings Modal -->
+  <div id="setup-modal" class="modal">
+    <div class="modal-content">
+      <h2>Dashboard Settings</h2>
+      <form id="setup-form">
+        <fieldset>
+          <legend>System Info</legend>
+          <label for="sys-browser">Browser:</label>
+          <input type="text" id="sys-browser" name="browser" placeholder="Enter your browser" required>
+          <label for="sys-os">Operating System:</label>
+          <input type="text" id="sys-os" name="os" placeholder="Enter your operating system" required>
+          <label for="sys-wm">Window Manager:</label>
+          <input type="text" id="sys-wm" name="wm" placeholder="Enter your window manager" required>
+        </fieldset>
+        <fieldset>
+          <legend>Countdown Events</legend>
+          <div id="countdown-events-container">
+            <!-- Dynamic countdown entries will appear here -->
+          </div>
+          <button type="button" id="add-countdown">Add Countdown</button>
+        </fieldset>
+        <fieldset>
+          <legend>Pins</legend>
+          <div id="pins-container">
+            <!-- Dynamic pin entries will appear here -->
+          </div>
+          <button type="button" id="add-pin">Add Pin</button>
+        </fieldset>
+        <button type="submit">Save Configuration</button>
+      </form>
+
+      <!-- Import / Export Section -->
+      <div id="import-export-section">
+        <button type="button" id="export-config">Export Config</button>
+        <button type="button" id="import-config">Import Config</button>
+        <div id="import-area-container">
+          <textarea id="import-area" rows="5" placeholder="Paste config JSON here"></textarea>
+          <button type="button" id="import-submit">Submit Import</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script>
-    /* Time and Date Functions */
+    /* ---------- Time and Date Functions ---------- */
     function updateTime() {
       const now = new Date();
       document.getElementById('time').textContent = now.toLocaleTimeString();
@@ -246,18 +369,31 @@
     setInterval(updateTime, 1000);
     updateTime();
 
-    /* Countdown Functions */
-    const countdowns = [
-      { title: 'Jee Mains 2', date: '2025-04-01' },
-      { title: 'Boards', date: '2025-02-21' },
-      { title: 'Jee Advance', date: '2025-05-18' }
-    ];
+    /* ---------- Configuration Functions ---------- */
+    // Load configuration from localStorage
+    function loadConfig() {
+      const configJSON = localStorage.getItem('dashboardConfig');
+      if (configJSON) {
+        try {
+          return JSON.parse(configJSON);
+        } catch (e) {
+          console.error('Error parsing configuration:', e);
+        }
+      }
+      return null;
+    }
 
-    function updateCountdowns() {
+    // Update the dashboard based on the config
+    function updateDashboard(config) {
+      // Update system info
+      document.getElementById('browser-value').textContent = config.sysinfo.browser;
+      document.getElementById('os-value').textContent = config.sysinfo.os;
+      document.getElementById('wm-value').textContent = config.sysinfo.wm;
+      
+      // Update countdown events
       const countdownContainer = document.getElementById('countdown');
       countdownContainer.innerHTML = '';
-      
-      countdowns.forEach(({ title, date }) => {
+      config.countdowns.forEach(({ title, date }) => {
         const remaining = Math.ceil((new Date(date) - new Date()) / (1000 * 60 * 60 * 24));
         const div = document.createElement('div');
         div.className = 'countdown-item';
@@ -267,39 +403,194 @@
         `;
         countdownContainer.appendChild(div);
       });
-    }
-
-    updateCountdowns();
-    setInterval(updateCountdowns, 3600000); // Update every hour
-
-    /* Additional Fixes for Bookmarks */
-    document.addEventListener('DOMContentLoaded', function(){
-      document.querySelectorAll('.bookmark').forEach(bookmark => {
-        // Fix for about:logins bookmark.
-        if (bookmark.getAttribute('href') === 'about:logins') {
-          bookmark.setAttribute('href', '#');
-          bookmark.addEventListener('click', function(e) {
-            e.preventDefault();
-            // Just open the passwords page - let the browser handle it internally
-            window.location.href = 'about:logins';
-          });
-        }
-        // Dynamic image assignment if the image src is empty.
-        const img = bookmark.querySelector('img');
+      
+      // Update pins (bookmarks)
+      const bookmarksContainer = document.querySelector('.bookmarks');
+      bookmarksContainer.innerHTML = '';
+      config.pins.forEach(({ title, url, icon }) => {
+        const a = document.createElement('a');
+        a.href = url;
+        a.className = 'bookmark';
+        a.innerHTML = `
+          <img src="${icon ? icon : ''}" alt="${title}">
+          ${title}
+        `;
+        bookmarksContainer.appendChild(a);
+        
+        // If no icon was provided, attempt to fetch a favicon via FaviconKit
+        const img = a.querySelector('img');
         if (img && (!img.getAttribute('src') || img.getAttribute('src').trim() === "")) {
-          const href = bookmark.getAttribute('href');
-          if (href && href.startsWith('http')) {
-            try {
-              const urlObj = new URL(href);
-              const domain = urlObj.hostname;
-              // Use FaviconKit API for (usually) transparent favicons.
-              img.src = "https://api.faviconkit.com/" + domain + "/64";
-            } catch(e) {
-              img.src = document.querySelector('link[rel="icon"]').href;
-            }
-          } else {
+          try {
+            const urlObj = new URL(url);
+            const domain = urlObj.hostname;
+            img.src = "https://api.faviconkit.com/" + domain + "/64";
+          } catch(e) {
             img.src = document.querySelector('link[rel="icon"]').href;
           }
+        }
+      });
+    }
+
+    // Populate the settings form with the saved configuration (if any)
+    function populateSettingsForm() {
+      const config = loadConfig();
+      // Clear any previous countdown or pin entries
+      document.getElementById('countdown-events-container').innerHTML = '';
+      document.getElementById('pins-container').innerHTML = '';
+      
+      if (config) {
+        // Populate system info
+        document.getElementById('sys-browser').value = config.sysinfo.browser;
+        document.getElementById('sys-os').value = config.sysinfo.os;
+        document.getElementById('sys-wm').value = config.sysinfo.wm;
+        // Populate countdown events
+        config.countdowns.forEach(({ title, date }) => {
+          addCountdownEntry(title, date);
+        });
+        // Populate pins
+        config.pins.forEach(({ title, url, icon }) => {
+          addPinEntry(title, url, icon);
+        });
+      }
+    }
+
+    /* ---------- Settings Modal Handlers ---------- */
+    // Open the settings modal and populate the form with current config
+    function openSettingsModal() {
+      populateSettingsForm();
+      document.getElementById('setup-modal').style.display = 'flex';
+    }
+
+    // Close the settings modal
+    function closeSettingsModal() {
+      document.getElementById('setup-modal').style.display = 'none';
+    }
+
+    /* ---------- Helper Functions to Add Form Entries ---------- */
+    function addCountdownEntry(title = '', date = '') {
+      const container = document.getElementById('countdown-events-container');
+      const div = document.createElement('div');
+      div.className = 'countdown-entry';
+      div.innerHTML = `
+        <label>Title: <input type="text" name="countdown-title" value="${title}" required></label>
+        <label>Date: <input type="date" name="countdown-date" value="${date}" required></label>
+        <button type="button" class="remove-countdown">Remove</button>
+      `;
+      container.appendChild(div);
+      div.querySelector('.remove-countdown').addEventListener('click', function(){
+        container.removeChild(div);
+      });
+    }
+
+    function addPinEntry(title = '', url = '', icon = '') {
+      const container = document.getElementById('pins-container');
+      const div = document.createElement('div');
+      div.className = 'pin-entry';
+      div.innerHTML = `
+        <label>Title: <input type="text" name="pin-title" value="${title}" required></label>
+        <label>URL: <input type="url" name="pin-url" value="${url}" required></label>
+        <label>Icon URL (optional): <input type="url" name="pin-icon" value="${icon}"></label>
+        <button type="button" class="remove-pin">Remove</button>
+      `;
+      container.appendChild(div);
+      div.querySelector('.remove-pin').addEventListener('click', function(){
+        container.removeChild(div);
+      });
+    }
+
+    /* ---------- DOM Content Loaded Handlers ---------- */
+    document.addEventListener('DOMContentLoaded', function(){
+      // If a config exists, update the dashboard
+      const config = loadConfig();
+      if (config) {
+        updateDashboard(config);
+      } else {
+        // No config yet? Open the settings modal automatically.
+        document.getElementById('setup-modal').style.display = 'flex';
+      }
+      
+      // Settings button click
+      document.getElementById('settings-button').addEventListener('click', openSettingsModal);
+      
+      // Handle form submission to save configuration
+      document.getElementById('setup-form').addEventListener('submit', function(e){
+        e.preventDefault();
+        // Gather system info
+        const browser = document.getElementById('sys-browser').value;
+        const os = document.getElementById('sys-os').value;
+        const wm = document.getElementById('sys-wm').value;
+        
+        // Gather countdown events
+        const countdownEntries = document.querySelectorAll('#countdown-events-container .countdown-entry');
+        const countdowns = [];
+        countdownEntries.forEach(entry => {
+          const title = entry.querySelector('input[name="countdown-title"]').value;
+          const date = entry.querySelector('input[name="countdown-date"]').value;
+          if (title && date) {
+            countdowns.push({ title, date });
+          }
+        });
+        
+        // Gather pins
+        const pinEntries = document.querySelectorAll('#pins-container .pin-entry');
+        const pins = [];
+        pinEntries.forEach(entry => {
+          const title = entry.querySelector('input[name="pin-title"]').value;
+          const url = entry.querySelector('input[name="pin-url"]').value;
+          const icon = entry.querySelector('input[name="pin-icon"]').value;
+          if (title && url) {
+            pins.push({ title, url, icon });
+          }
+        });
+        
+        const newConfig = { sysinfo: { browser, os, wm }, countdowns, pins };
+        localStorage.setItem('dashboardConfig', JSON.stringify(newConfig));
+        updateDashboard(newConfig);
+        closeSettingsModal();
+      });
+      
+      // Handler to add a new countdown entry in the form
+      document.getElementById('add-countdown').addEventListener('click', function(){
+        addCountdownEntry();
+      });
+      
+      // Handler to add a new pin entry in the form
+      document.getElementById('add-pin').addEventListener('click', function(){
+        addPinEntry();
+      });
+      
+      // Export configuration: copy config JSON to clipboard
+      document.getElementById('export-config').addEventListener('click', function(){
+        const config = loadConfig();
+        if (config) {
+          const configJSON = JSON.stringify(config, null, 2);
+          navigator.clipboard.writeText(configJSON)
+            .then(() => alert('Configuration copied to clipboard!'))
+            .catch(err => alert('Error copying config: ' + err));
+        } else {
+          alert('No configuration available to export.');
+        }
+      });
+      
+      // Toggle the import area visibility
+      document.getElementById('import-config').addEventListener('click', function(){
+        const importAreaContainer = document.getElementById('import-area-container');
+        importAreaContainer.style.display = (importAreaContainer.style.display === 'none' || importAreaContainer.style.display === '') ? 'block' : 'none';
+      });
+      
+      // Handle import submission: parse and update configuration
+      document.getElementById('import-submit').addEventListener('click', function(){
+        const importText = document.getElementById('import-area').value;
+        try {
+          const importedConfig = JSON.parse(importText);
+          localStorage.setItem('dashboardConfig', JSON.stringify(importedConfig));
+          updateDashboard(importedConfig);
+          populateSettingsForm();
+          alert('Configuration imported successfully!');
+          // Hide the import area
+          document.getElementById('import-area-container').style.display = 'none';
+        } catch(e) {
+          alert('Invalid configuration JSON. Please check your input.');
         }
       });
     });
